@@ -396,10 +396,10 @@ Jobs:
 - [ ] SSO auto-login admin dari Central (setelah pilih app di dashboard Central)
 
 ### Sprint 2 — Karyawan & Absen Dasar (Minggu 3-4)
-- [ ] CRUD karyawan + generate/reset PIN
-- [ ] Login karyawan via PIN (Nuxt4 page)
-- [ ] Clock in/out + validasi GPS radius
-- [ ] Work locations (multi-outlet)
+- [x] CRUD karyawan + generate/reset PIN (backend: `GET/POST/PUT /api/v1/employees`, `POST .../reset-pin`, `DELETE` = nonaktifkan; PIN unik 6 digit, ditampilkan sekali)
+- [ ] Login karyawan via PIN (Nuxt4 page — endpoint API `POST /api/v1/auth/employee-login` sudah ada sejak Sprint 1)
+- [x] Clock in/out + validasi GPS radius (backend: `POST /api/v1/attendance/clock-in|clock-out`, haversine, sesi terbuka, waktu dari server; `GET /api/v1/attendance/me` riwayat sendiri)
+- [x] Work locations (backend: `GET/POST/PUT/DELETE /api/v1/work-locations`, multi-outlet, radius configurable, default 100m)
 
 ### Sprint 3 — Selfie, Shift & PWA (Minggu 5-6)
 - [ ] Verifikasi selfie saat absen
