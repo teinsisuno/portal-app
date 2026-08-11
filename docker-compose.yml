@@ -5,7 +5,7 @@ services:
     container_name: portal-app
     restart: unless-stopped
     # Port 80 dipakai pepepe — portal-app listen di 8080 (tunnel megakomsel
-    # akan ngarahin portal.megakomsel.com → http://localhost:8080)
+    # akan ngarahin megakomsel.com → http://localhost:8080)
     ports:
       - "8080:80"
     volumes:
