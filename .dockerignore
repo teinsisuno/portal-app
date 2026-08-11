@@ -11,6 +11,8 @@
 /storage
 /bootstrap/cache
 /public/build
+# File sinyal Vite dev server — JANGAN ikut ke image produksi
+/public/hot
 
 # Git & editor
 .git
