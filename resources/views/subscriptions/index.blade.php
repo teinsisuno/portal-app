@@ -43,8 +43,13 @@
                         </td>
                         <td class="px-4 py-3">
                             @if (in_array($sub->status, ['trialing', 'active']))
-                                <a href="https://{{ $tenant->slug }}.megakomsel.com" target="_blank"
-                                   class="text-blue-600 hover:underline">Buka App ↗</a>
+                                @if ($sub->app->slug === 'absensi')
+                                    <a href="{{ route('apps.open', $sub->app->slug) }}"
+                                       class="text-blue-600 hover:underline">Buka App ↗</a>
+                                @else
+                                    <a href="https://{{ $tenant->slug }}.megakomsel.com" target="_blank"
+                                       class="text-blue-600 hover:underline">Buka App ↗</a>
+                                @endif
                             @else
                                 <a href="{{ route('payments.create', $sub->id) }}"
                                    class="text-blue-600 hover:underline">Bayar</a>

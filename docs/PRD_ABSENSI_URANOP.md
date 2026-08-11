@@ -104,25 +104,25 @@ Absensi API ── verifikasi signature & expiry token ──► buat/cocokkan u
 - **Priority:** Must
 - **User Story:** Sebagai sistem, saya ingin membuat database tenant baru otomatis saat subscription Absensi aktif di Central, agar tenant langsung bisa pakai app.
 - **Acceptance Criteria:**
-  - [ ] Dipicu otomatis saat subscription Absensi dibuat di Central (status trialing) — sebelum auto-login
-  - [ ] Endpoint webhook `POST /api/v1/provisioning/tenant` menerima payload dari Central (`tenant_slug`, `tenant_name`, `owner_email`, `subscription_id`)
-  - [ ] Membuat database baru `tenant_absensi_{slug}` + migrasi otomatis
-  - [ ] Mencatat mapping tenant di tabel pusat `tenant_meta` (di database Absensi sendiri, bukan central_db)
-  - [ ] Idempotent — webhook terpanggil 2x tidak membuat DB dobel
-  - [ ] Response sukses/gagal dikirim balik ke Central untuk update status provisioning
+  - [x] Dipicu otomatis saat subscription Absensi dibuat di Central (status trialing) — sebelum auto-login
+  - [x] Endpoint webhook `POST /api/v1/provisioning/tenant` menerima payload dari Central (`tenant_slug`, `tenant_name`, `owner_email`, `subscription_id`)
+  - [x] Membuat database baru `tenant_absensi_{slug}` + migrasi otomatis
+  - [x] Mencatat mapping tenant di tabel pusat `tenant_meta` (di database Absensi sendiri, bukan central_db)
+  - [x] Idempotent — webhook terpanggil 2x tidak membuat DB dobel
+  - [ ] Response sukses/gagal dikirim balik ke Central untuk update status provisioning (central baru log, belum ada kolom status provisioning)
 
 ### FR-002: SSO Login Owner/Admin
 - **Priority:** Must
 - **User Story:** Sebagai owner tenant, saya ingin masuk ke app Absensi langsung dari dashboard Central tanpa login ulang.
 - **Acceptance Criteria:**
-  - [ ] Auto-login langsung setelah pilih aplikasi di Central (atau klik "Buka App") — tanpa login manual
-  - [ ] Central generate signed token (JWT, expired < 60 detik, one-time) berisi `tenant_id`, `user_id`, `email`, `role`
-  - [ ] Redirect ke `https://{tenant-slug}-absensi.megakomsel.com/sso?token=xxx`
-  - [ ] Absensi API endpoint `POST /api/v1/auth/sso` memverifikasi signature & expiry
-  - [ ] Auto-create/update user admin di DB tenant Absensi bila belum ada
-  - [ ] Mapping role: Central owner → Absensi owner; Central member/admin → Absensi admin (supervisor dibuat manual di app)
-  - [ ] Session/token Absensi (Sanctum) diterbitkan untuk dipakai Nuxt4
-  - [ ] Token SSO ditolak jika sudah expired, terpakai, atau signature tidak valid
+  - [x] Auto-login langsung setelah pilih aplikasi di Central (atau klik "Buka App") — tanpa login manual
+  - [x] Central generate signed token (JWT, expired < 60 detik, one-time) berisi `tenant_id`, `user_id`, `email`, `role`
+  - [x] Redirect ke `https://{tenant-slug}-absensi.megakomsel.com/sso?token=xxx`
+  - [x] Absensi API endpoint `POST /api/v1/auth/sso` memverifikasi signature & expiry
+  - [x] Auto-create/update user admin di DB tenant Absensi bila belum ada
+  - [x] Mapping role: Central owner → Absensi owner; Central member/admin → Absensi admin (supervisor dibuat manual di app)
+  - [x] Session/token Absensi (Sanctum) diterbitkan untuk dipakai Nuxt4
+  - [x] Token SSO ditolak jika sudah expired, terpakai, atau signature tidak valid
 
 ### FR-003: Manajemen Karyawan & PIN
 - **Priority:** Must

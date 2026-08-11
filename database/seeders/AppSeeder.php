@@ -14,6 +14,13 @@ class AppSeeder extends Seeder
     {
         $apps = [
             [
+                'slug' => 'absensi',
+                'name' => 'Absensi',
+                'description' => 'Aplikasi manajemen kehadiran karyawan: absen GPS, izin, rekap (produk pertama).',
+                'price_monthly' => 35000,
+                'status' => 'available',
+            ],
+            [
                 'slug' => 'toyaa',
                 'name' => 'Toyaa',
                 'description' => 'Aplikasi pencatatan air & meteran untuk PDAM kecil / pengelola air.',

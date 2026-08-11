@@ -2,6 +2,7 @@
 
 namespace App\Core\Modules\Subscription\Controllers;
 
+use App\Core\Modules\Absensi\Services\AbsensiIntegrationService;
 use App\Core\Modules\Subscription\Models\Subscription;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -51,7 +52,7 @@ class SubscriptionController extends Controller
 
         $now = now();
 
-        Subscription::create([
+        $subscription = Subscription::create([
             'tenant_id' => $tenant->id,
             'app_id' => $validated['app_id'],
             'plan' => $validated['plan'],
@@ -59,6 +60,11 @@ class SubscriptionController extends Controller
             'trial_ends_at' => $now->copy()->addDays(7),
             'starts_at' => $now,
         ]);
+
+        // FR-001: provisioning otomatis DB tenant di absensi-app saat subscription dibuat.
+        if ($subscription->app->slug === 'absensi') {
+            app(AbsensiIntegrationService::class)->provisionTenant($subscription);
+        }
 
         return redirect()->route('subscriptions.index')->with('status', 'subscription-created');
     }

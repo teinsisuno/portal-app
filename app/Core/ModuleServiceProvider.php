@@ -17,6 +17,7 @@ class ModuleServiceProvider extends ServiceProvider
         'Subscription',
         'Payment',
         'Admin',
+        'Absensi',
     ];
 
     public function register(): void
