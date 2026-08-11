@@ -27,7 +27,7 @@ class AbsensiIntegrationTest extends TestCase
             'absensi.base_url' => 'http://absensi.test',
             'absensi.webhook_secret' => 'test-webhook-secret',
             'absensi.sso_secret' => 'test-sso-secret',
-            'absensi.tenant_domain_pattern' => '{slug}-absensi.megakomsel.com',
+            'absensi.tenant_domain_pattern' => 'https://{slug}-absensi.megakomsel.com',
         ]);
     }
 

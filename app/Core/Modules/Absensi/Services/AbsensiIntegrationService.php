@@ -75,9 +75,9 @@ class AbsensiIntegrationService
             'role' => $role,
         ], (string) config('absensi.sso_secret'));
 
-        $pattern = (string) config('absensi.tenant_domain_pattern', '{slug}-absensi.megakomsel.com');
+        $pattern = (string) config('absensi.tenant_domain_pattern', 'https://{slug}-absensi.megakomsel.com');
         $domain = str_replace('{slug}', $tenant->slug, $pattern);
 
-        return "https://{$domain}/sso?token=".urlencode($token);
+        return rtrim($domain, '/').'/sso?token='.urlencode($token);
     }
 }

@@ -22,6 +22,7 @@ return [
 
     /*
     | Pola subdomain tenant: {slug}-absensi.megakomsel.com
+    | Bisa menyertakan scheme + port (untuk dev: http://{slug}-absensi.test:3000).
     */
-    'tenant_domain_pattern' => env('ABSENSI_TENANT_DOMAIN_PATTERN', '{slug}-absensi.megakomsel.com'),
+    'tenant_domain_pattern' => env('ABSENSI_TENANT_DOMAIN_PATTERN', 'https://{slug}-absensi.megakomsel.com'),
 ];
