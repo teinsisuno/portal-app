@@ -1,0 +1,24 @@
+# Jangan salin env lokal & secret ke image
+.env
+.env.*
+!.env.example
+
+# Dependensi di-build di stage masing-masing
+/vendor
+/node_modules
+
+# Storage & cache dibikin saat runtime
+/storage
+/bootstrap/cache
+/public/build
+
+# Git & editor
+.git
+.gitignore
+.idea
+.vscode
+*.log
+
+# Docker files (entrypoint di-copy eksplisit oleh Dockerfile — jangan di-exclude)
+Dockerfile
+docker-compose.yml

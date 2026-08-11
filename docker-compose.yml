@@ -1,0 +1,48 @@
+services:
+  portal-app:
+    build: .
+    image: portal-app:latest
+    container_name: portal-app
+    restart: unless-stopped
+    # Port 80 dipakai pepepe — portal-app listen di 8080 (tunnel megakomsel
+    # akan ngarahin portal.megakomsel.com → http://localhost:8080)
+    ports:
+      - "8080:80"
+    volumes:
+      - ./docker/.env.production:/var/www/html/.env:ro
+      - portal-storage:/var/www/html/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      # DB_* di-set sebagai env var OS (entrypoint getenv butuh ini; Laravel juga konsisten)
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_DATABASE=${MYSQL_DATABASE:-central_db}
+      - DB_USERNAME=${MYSQL_USER:-portal}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # MySQL 8 untuk central_db (1 database global platform, tanpa tenancy)
+  mysql:
+    image: mysql:8.0
+    container_name: portal-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-central_db}
+      MYSQL_USER: ${MYSQL_USER:-portal}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - portal-mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  portal-storage:
+  portal-mysql:
