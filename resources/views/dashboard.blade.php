@@ -74,7 +74,7 @@
                         </td>
                         <td class="px-6 py-3">
                             @if (in_array($sub->status, ['trialing', 'active']))
-                                <a href="https://{{ $tenant->slug }}.megakomsel.com" target="_blank"
+                                <a href="{{ route('apps.open', ['slug' => $sub->app->slug]) }}" target="_blank"
                                    class="text-blue-600 hover:underline">Buka App ↗</a>
                             @else
                                 <a href="{{ route('payments.create', $sub->id) }}"
