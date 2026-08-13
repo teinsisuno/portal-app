@@ -1,7 +1,6 @@
 services:
   portal-app:
-    build: .
-    image: portal-app:latest
+    image: ghcr.io/sigitsuseno/portal-app:latest
     container_name: portal-app
     restart: unless-stopped
     # Port 80 dipakai pepepe — portal-app listen di 8080 (tunnel megakomsel
@@ -42,6 +41,17 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
+  # Watchtower — auto-update image dari GHCR tiap ada push (poll 5 menit)
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_POLL_INTERVAL=300
 
 volumes:
   portal-storage:
