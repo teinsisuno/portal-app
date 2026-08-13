@@ -1,5 +1,8 @@
 services:
   portal-app:
+    # ⚠️ SEMENTARA: build lokal aktif (CI GHCR ke-lock billing GitHub 2026-08-13).
+    # Setelah billing beres & image GHCR ada, hapus `build: .` biar pure pull + Watchtower.
+    build: .
     image: ghcr.io/sigitsuseno/portal-app:latest
     container_name: portal-app
     restart: unless-stopped
@@ -42,16 +45,12 @@ services:
       timeout: 5s
       retries: 20
 
-  # Watchtower — auto-update image dari GHCR tiap ada push (poll 5 menit)
-  watchtower:
-    image: containrrr/watchtower:latest
-    container_name: watchtower
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - WATCHTOWER_CLEANUP=true
-      - WATCHTOWER_POLL_INTERVAL=300
+  # NOTE: service watchtower DIHAPUS dari compose ini (2026-08-13).
+  # Container watchtower existing (label-enabled, dari compose absensi-app) sudah jalan
+  # dan aman; compose ini dulu cuma bikin konflik container_name + tanpa label filter.
+  # Kalau billing GitHub beres & mau GHCR auto-update portal-app: tambah label
+  # `com.centurylinklabs.watchtower.enable=true` di service portal-app, nanti watchtower
+  # absensi-app (label-enabled) yang pegang.
 
 volumes:
   portal-storage:
