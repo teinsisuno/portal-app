@@ -5,8 +5,8 @@
 @section('content')
 <div class="max-w-2xl">
     <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-slate-800">{{ $user ? 'Edit User' : 'Tambah User' }}</h1>
-        <a href="{{ route('admin.users.index') }}" class="text-sm text-slate-500 hover:text-blue-600">← Kembali</a>
+        <h1 class="text-2xl font-bold text-ink">{{ $user ? 'Edit User' : 'Tambah User' }}</h1>
+        <a href="{{ route('admin.users.index') }}" class="text-sm text-muted hover:text-teal-600">← Kembali</a>
     </div>
 
     @if ($errors->any())
@@ -21,68 +21,68 @@
 
     <form method="POST"
           action="{{ $user ? route('admin.users.update', $user) : route('admin.users.store') }}"
-          class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-5">
+          class="bg-card rounded-xl shadow-sm border border-line p-6 space-y-5">
         @csrf
         @if ($user)
             @method('PUT')
         @endif
 
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap</label>
+            <label class="block text-sm font-medium text-ink mb-1">Nama Lengkap</label>
             <input type="text" name="name" value="{{ old('name', $user->name ?? '') }}" required
-                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="w-full rounded-lg border border-line-strong px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+            <label class="block text-sm font-medium text-ink mb-1">Email</label>
             <input type="email" name="email" value="{{ old('email', $user->email ?? '') }}" required
-                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="w-full rounded-lg border border-line-strong px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">No. Telepon</label>
+            <label class="block text-sm font-medium text-ink mb-1">No. Telepon</label>
             <input type="text" name="phone" value="{{ old('phone', $user->phone ?? '') }}"
-                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="w-full rounded-lg border border-line-strong px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Tipe Member</label>
+            <label class="block text-sm font-medium text-ink mb-1">Tipe Member</label>
             <select name="member_type" required
-                    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    class="w-full rounded-lg border border-line-strong px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
                 @foreach ($memberTypes as $type)
                     <option value="{{ $type }}" @selected(old('member_type', $user->member_type ?? '') === $type)>
                         {{ ucfirst($type) }}
                     </option>
                 @endforeach
             </select>
-            <p class="text-xs text-slate-400 mt-1">Individu (pribadi) · UMKM (usaha kecil-menengah) · Perusahaan (badan usaha)</p>
+            <p class="text-xs text-soft mt-1">Individu (pribadi) · UMKM (usaha kecil-menengah) · Perusahaan (badan usaha)</p>
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">
+            <label class="block text-sm font-medium text-ink mb-1">
                 Password {{ $user ? '(kosongkan jika tidak diganti)' : '' }}
             </label>
             <input type="password" name="password" {{ $user ? '' : 'required' }}
-                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="w-full rounded-lg border border-line-strong px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">Konfirmasi Password</label>
+            <label class="block text-sm font-medium text-ink mb-1">Konfirmasi Password</label>
             <input type="password" name="password_confirmation" {{ $user ? '' : 'required' }}
-                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                   class="w-full rounded-lg border border-line-strong px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
         </div>
 
-        <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+        <label class="flex items-center gap-2 text-sm text-ink cursor-pointer">
             <input type="checkbox" name="is_admin" value="1" @checked(old('is_admin', $user->is_admin ?? false))
-                   class="rounded border-slate-300">
+                   class="rounded border-line-strong">
             Jadikan superadmin (akses panel /admin)
         </label>
 
         <div class="flex items-center gap-3 pt-2">
-            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded-lg">
+            <button class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-5 py-2 rounded-lg">
                 {{ $user ? 'Simpan Perubahan' : 'Buat User' }}
             </button>
-            <a href="{{ route('admin.users.index') }}" class="text-sm text-slate-500 hover:text-blue-600">Batal</a>
+            <a href="{{ route('admin.users.index') }}" class="text-sm text-muted hover:text-teal-600">Batal</a>
         </div>
     </form>
 </div>

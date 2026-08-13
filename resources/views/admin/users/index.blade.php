@@ -4,14 +4,14 @@
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-slate-800">Kelola User</h1>
+    <h1 class="text-2xl font-bold text-ink">Kelola User</h1>
     <div class="flex gap-3 text-sm items-center">
-        <a href="{{ route('admin.tenants.index') }}" class="text-slate-500 hover:text-blue-600">Tenants</a>
-        <a href="{{ route('admin.payments.index') }}" class="text-slate-500 hover:text-blue-600">Pembayaran</a>
-        <a href="{{ route('admin.apps.index') }}" class="text-slate-500 hover:text-blue-600">Aplikasi</a>
-        <a href="{{ route('admin.users.index') }}" class="text-blue-600 font-medium border-b-2 border-blue-600">Users</a>
+        <a href="{{ route('admin.tenants.index') }}" class="text-muted hover:text-teal-600">Tenants</a>
+        <a href="{{ route('admin.payments.index') }}" class="text-muted hover:text-teal-600">Pembayaran</a>
+        <a href="{{ route('admin.apps.index') }}" class="text-muted hover:text-teal-600">Aplikasi</a>
+        <a href="{{ route('admin.users.index') }}" class="text-teal-600 font-medium border-b-2 border-teal-600">Users</a>
         <a href="{{ route('admin.users.create') }}"
-           class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg">+ Tambah User</a>
+           class="bg-teal-600 hover:bg-teal-700 text-white font-medium px-4 py-2 rounded-lg">+ Tambah User</a>
     </div>
 </div>
 
@@ -33,8 +33,8 @@
 
 <form method="GET" class="mb-6 flex flex-wrap gap-2">
     <input type="text" name="search" value="{{ $filters['search'] ?? '' }}" placeholder="Cari nama / email / telepon"
-           class="rounded-lg border border-slate-300 px-3 py-2 text-sm w-full md:w-72">
-    <select name="member_type" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
+           class="rounded-lg border border-line-strong px-3 py-2 text-sm w-full md:w-72">
+    <select name="member_type" class="rounded-lg border border-line-strong px-3 py-2 text-sm">
         <option value="">Semua tipe</option>
         @foreach ($memberTypes as $type)
             <option value="{{ $type }}" @selected(($filters['member_type'] ?? '') === $type)>
@@ -42,15 +42,15 @@
             </option>
         @endforeach
     </select>
-    <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg">Cari</button>
+    <button class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2 rounded-lg">Cari</button>
     @if (($filters['search'] ?? '') || ($filters['member_type'] ?? ''))
-        <a href="{{ route('admin.users.index') }}" class="text-sm text-slate-500 hover:text-blue-600 self-center">Reset</a>
+        <a href="{{ route('admin.users.index') }}" class="text-sm text-muted hover:text-teal-600 self-center">Reset</a>
     @endif
 </form>
 
-<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+<div class="bg-card rounded-xl shadow-sm border border-line overflow-hidden">
     <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left text-slate-500 border-b">
+        <thead class="bg-elevated text-left text-muted border-b">
             <tr>
                 <th class="px-6 py-3">Nama</th>
                 <th class="px-6 py-3">Email</th>
@@ -61,7 +61,7 @@
                 <th class="px-6 py-3">Aksi</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody class="divide-y divide-line">
             @forelse ($users as $user)
                 <tr>
                     <td class="px-6 py-3 font-medium">{{ $user->name }}</td>
@@ -70,12 +70,12 @@
                         <span class="px-2 py-0.5 rounded-full text-xs
                             @if ($user->member_type === 'perusahaan') bg-indigo-100 text-indigo-700
                             @elseif ($user->member_type === 'umkm') bg-amber-100 text-amber-700
-                            @else bg-slate-100 text-slate-600 @endif">
+                            @else bg-elevated text-muted @endif">
                             {{ $user->memberTypeLabel() }}
                         </span>
                     </td>
-                    <td class="px-6 py-3 text-slate-600">{{ $user->created_at->format('d M Y') }}</td>
-                    <td class="px-6 py-3 text-slate-600">{{ $user->tenants_count }}</td>
+                    <td class="px-6 py-3 text-muted">{{ $user->created_at->format('d M Y') }}</td>
+                    <td class="px-6 py-3 text-muted">{{ $user->tenants_count }}</td>
                     <td class="px-6 py-3">
                         @if ($user->is_admin)
                             <span class="px-2 py-0.5 rounded-full text-xs bg-purple-100 text-purple-700">superadmin</span>
@@ -84,7 +84,7 @@
                         @endif
                     </td>
                     <td class="px-6 py-3 whitespace-nowrap">
-                        <a href="{{ route('admin.users.edit', $user) }}" class="text-blue-600 hover:underline">Edit</a>
+                        <a href="{{ route('admin.users.edit', $user) }}" class="text-teal-600 hover:underline">Edit</a>
                         @unless ($user->is(auth()->user()))
                             <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline"
                                   onsubmit="return confirm('Hapus user {{ addslashes($user->name) }}?');">
@@ -96,7 +96,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="7" class="px-6 py-8 text-center text-slate-500">Tidak ada user.</td></tr>
+                <tr><td colspan="7" class="px-6 py-8 text-center text-muted">Tidak ada user.</td></tr>
             @endforelse
         </tbody>
     </table>

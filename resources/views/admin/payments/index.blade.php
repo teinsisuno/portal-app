@@ -4,12 +4,12 @@
 
 @section('content')
 <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-bold text-slate-800">Konfirmasi Pembayaran</h1>
+    <h1 class="text-2xl font-bold text-ink">Konfirmasi Pembayaran</h1>
     <div class="flex gap-3 text-sm">
-        <a href="{{ route('admin.tenants.index') }}" class="text-slate-500 hover:text-blue-600">Tenants</a>
-        <a href="{{ route('admin.payments.index') }}" class="text-blue-600 font-medium border-b-2 border-blue-600">Pembayaran</a>
-        <a href="{{ route('admin.apps.index') }}" class="text-slate-500 hover:text-blue-600">Aplikasi</a>
-        <a href="{{ route('admin.users.index') }}" class="text-slate-500 hover:text-blue-600">Users</a>
+        <a href="{{ route('admin.tenants.index') }}" class="text-muted hover:text-teal-600">Tenants</a>
+        <a href="{{ route('admin.payments.index') }}" class="text-teal-600 font-medium border-b-2 border-teal-600">Pembayaran</a>
+        <a href="{{ route('admin.apps.index') }}" class="text-muted hover:text-teal-600">Aplikasi</a>
+        <a href="{{ route('admin.users.index') }}" class="text-muted hover:text-teal-600">Users</a>
     </div>
 </div>
 
@@ -21,7 +21,7 @@
 @endif
 
 <form method="GET" class="mb-6">
-    <select name="status" onchange="this.form.submit()" class="rounded-lg border border-slate-300 px-3 py-2 text-sm">
+    <select name="status" onchange="this.form.submit()" class="rounded-lg border border-line-strong px-3 py-2 text-sm">
         <option value="">Semua status</option>
         @foreach (['pending', 'confirmed', 'rejected', 'failed'] as $s)
             <option value="{{ $s }}" @selected(($filters['status'] ?? '') === $s)>{{ ucfirst($s) }}</option>
@@ -29,9 +29,9 @@
     </select>
 </form>
 
-<div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+<div class="bg-card rounded-xl shadow-sm border border-line overflow-hidden">
     <table class="w-full text-sm">
-        <thead class="bg-slate-50 text-left text-slate-500 border-b">
+        <thead class="bg-elevated text-left text-muted border-b">
             <tr>
                 <th class="px-6 py-3">Tanggal</th>
                 <th class="px-6 py-3">Tenant</th>
@@ -43,17 +43,17 @@
                 <th class="px-6 py-3">Aksi</th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody class="divide-y divide-line">
             @forelse ($payments as $payment)
                 <tr>
-                    <td class="px-6 py-3 text-slate-600">{{ $payment->created_at->format('d M H:i') }}</td>
+                    <td class="px-6 py-3 text-muted">{{ $payment->created_at->format('d M H:i') }}</td>
                     <td class="px-6 py-3 font-medium">{{ $payment->tenant->name }}</td>
                     <td class="px-6 py-3">{{ $payment->subscription->app->name }}</td>
                     <td class="px-6 py-3 font-mono text-xs">{{ $payment->gateway_ref }}</td>
                     <td class="px-6 py-3">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
                     <td class="px-6 py-3">
                         @if ($payment->proof_image)
-                            <a href="{{ asset('storage/' . $payment->proof_image) }}" target="_blank" class="text-blue-600 hover:underline">Lihat</a>
+                            <a href="{{ asset('storage/' . $payment->proof_image) }}" target="_blank" class="text-teal-600 hover:underline">Lihat</a>
                         @else
                             -
                         @endif
@@ -79,12 +79,12 @@
                                 </form>
                             </div>
                         @else
-                            <span class="text-slate-400 text-xs">{{ $payment->confirmed_at?->format('d M H:i') }}</span>
+                            <span class="text-soft text-xs">{{ $payment->confirmed_at?->format('d M H:i') }}</span>
                         @endif
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="8" class="px-6 py-8 text-center text-slate-500">Tidak ada pembayaran.</td></tr>
+                <tr><td colspan="8" class="px-6 py-8 text-center text-muted">Tidak ada pembayaran.</td></tr>
             @endforelse
         </tbody>
     </table>

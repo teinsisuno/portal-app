@@ -16,18 +16,18 @@
     </div>
 @endif
 
-<h1 class="text-2xl font-bold text-slate-800 mb-2">Halo, {{ Auth::user()->name }}! 👋</h1>
-<p class="text-slate-500 mb-6">Selamat datang di platform megakomsel.com</p>
+<h1 class="text-2xl font-bold text-ink mb-2">Halo, {{ Auth::user()->name }}! 👋</h1>
+<p class="text-muted mb-6">Selamat datang di platform megakomsel.com</p>
 
-<div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-    <h2 class="font-semibold text-slate-800 mb-4">Tenant Kamu</h2>
+<div class="bg-card rounded-xl shadow-sm border border-line p-6 mb-6">
+    <h2 class="font-semibold text-ink mb-4">Tenant Kamu</h2>
 
     @if ($tenant)
-        <div class="flex items-center justify-between border border-slate-200 rounded-lg p-4">
+        <div class="flex items-center justify-between border border-line rounded-lg p-4">
             <div>
-                <p class="font-medium text-slate-800">{{ $tenant->name }}</p>
-                <p class="text-sm text-slate-500">
-                    Slug: <code class="bg-slate-100 px-1 rounded">{{ $tenant->slug }}.megakomsel.com</code>
+                <p class="font-medium text-ink">{{ $tenant->name }}</p>
+                <p class="text-sm text-muted">
+                    Slug: <code class="bg-elevated px-1 rounded">{{ $tenant->slug }}.megakomsel.com</code>
                     · Status:
                     <span class="inline-block px-2 py-0.5 rounded-full text-xs
                         @if ($tenant->status === 'active') bg-emerald-100 text-emerald-700
@@ -39,18 +39,18 @@
             </div>
         </div>
     @else
-        <p class="text-sm text-slate-500">Belum ada tenant. Hubungi admin.</p>
+        <p class="text-sm text-muted">Belum ada tenant. Hubungi admin.</p>
     @endif
 </div>
 
 @if ($tenant)
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mb-6">
+    <div class="bg-card rounded-xl shadow-sm border border-line overflow-hidden mb-6">
         <div class="px-6 py-4 border-b flex items-center justify-between">
-            <h2 class="font-semibold text-slate-800">Langganan Aktif</h2>
-            <a href="{{ route('apps.index') }}" class="text-sm text-blue-600 hover:underline">+ Langganan baru</a>
+            <h2 class="font-semibold text-ink">Langganan Aktif</h2>
+            <a href="{{ route('apps.index') }}" class="text-sm text-teal-600 hover:underline">+ Langganan baru</a>
         </div>
         <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-left text-slate-500 border-b">
+            <thead class="bg-elevated text-left text-muted border-b">
                 <tr>
                     <th class="px-6 py-3">Aplikasi</th>
                     <th class="px-6 py-3">Plan</th>
@@ -58,15 +58,15 @@
                     <th class="px-6 py-3">Aksi</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-line">
                 @forelse ($subscriptions as $sub)
                     <tr>
-                        <td class="px-6 py-3 font-medium text-slate-800">{{ $sub->app->name }}</td>
-                        <td class="px-6 py-3 capitalize text-slate-600">{{ $sub->plan }}</td>
+                        <td class="px-6 py-3 font-medium text-ink">{{ $sub->app->name }}</td>
+                        <td class="px-6 py-3 capitalize text-muted">{{ $sub->plan }}</td>
                         <td class="px-6 py-3">
                             <span class="inline-block px-2 py-0.5 rounded-full text-xs
                                 @if ($sub->status === 'active') bg-emerald-100 text-emerald-700
-                                @elseif ($sub->status === 'trialing') bg-blue-100 text-blue-700
+                                @elseif ($sub->status === 'trialing') bg-teal-100 text-teal-700
                                 @elseif ($sub->status === 'past_due') bg-amber-100 text-amber-700
                                 @else bg-red-100 text-red-700 @endif">
                                 {{ $sub->status }}
@@ -76,21 +76,21 @@
                             @if (in_array($sub->status, ['trialing', 'active']))
                                 @if ($sub->app->slug === 'absensi')
                                     <a href="{{ route('apps.open', ['slug' => $sub->app->slug]) }}" target="_blank"
-                                       class="text-blue-600 hover:underline">Buka App ↗</a>
+                                       class="text-teal-600 hover:underline">Buka App ↗</a>
                                 @else
-                                    <span class="text-slate-400 text-xs">Menyusul</span>
+                                    <span class="text-soft text-xs">Menyusul</span>
                                 @endif
                             @else
                                 <a href="{{ route('payments.create', $sub->id) }}"
-                                   class="text-blue-600 hover:underline">Bayar</a>
+                                   class="text-teal-600 hover:underline">Bayar</a>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-6 py-8 text-center text-slate-500">
+                        <td colspan="4" class="px-6 py-8 text-center text-muted">
                             Belum ada langganan. Mulai dari
-                            <a href="{{ route('apps.index') }}" class="text-blue-600 hover:underline">katalog aplikasi</a>.
+                            <a href="{{ route('apps.index') }}" class="text-teal-600 hover:underline">katalog aplikasi</a>.
                         </td>
                     </tr>
                 @endforelse
@@ -98,15 +98,15 @@
         </table>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+    <div class="bg-card rounded-xl shadow-sm border border-line overflow-hidden">
         <div class="px-6 py-4 border-b">
-            <h2 class="font-semibold text-slate-800">Riwayat Pembayaran</h2>
+            <h2 class="font-semibold text-ink">Riwayat Pembayaran</h2>
         </div>
         @php
             $payments = $subscriptions->flatMap(fn ($sub) => $sub->payments)->sortByDesc('created_at');
         @endphp
         <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-left text-slate-500 border-b">
+            <thead class="bg-elevated text-left text-muted border-b">
                 <tr>
                     <th class="px-6 py-3">Tanggal</th>
                     <th class="px-6 py-3">Aplikasi</th>
@@ -115,13 +115,13 @@
                     <th class="px-6 py-3">Status</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
+            <tbody class="divide-y divide-line">
                 @forelse ($payments as $payment)
                     <tr>
-                        <td class="px-6 py-3 text-slate-600">{{ $payment->created_at->format('d M Y H:i') }}</td>
-                        <td class="px-6 py-3 font-medium text-slate-800">{{ $payment->subscription->app->name }}</td>
-                        <td class="px-6 py-3 text-slate-800">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
-                        <td class="px-6 py-3 text-slate-600">{{ $payment->method }}</td>
+                        <td class="px-6 py-3 text-muted">{{ $payment->created_at->format('d M Y H:i') }}</td>
+                        <td class="px-6 py-3 font-medium text-ink">{{ $payment->subscription->app->name }}</td>
+                        <td class="px-6 py-3 text-ink">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
+                        <td class="px-6 py-3 text-muted">{{ $payment->method }}</td>
                         <td class="px-6 py-3">
                             <span class="inline-block px-2 py-0.5 rounded-full text-xs
                                 @if ($payment->status === 'confirmed') bg-emerald-100 text-emerald-700
@@ -133,7 +133,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-8 text-center text-slate-500">Belum ada pembayaran.</td>
+                        <td colspan="5" class="px-6 py-8 text-center text-muted">Belum ada pembayaran.</td>
                     </tr>
                 @endforelse
             </tbody>
