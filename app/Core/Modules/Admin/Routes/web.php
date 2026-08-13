@@ -24,4 +24,9 @@ Route::prefix('admin')
         Route::put('/apps/{app}', [AppAdminController::class, 'update'])->name('admin.apps.update');
 
         Route::get('/users', [UserAdminController::class, 'index'])->name('admin.users.index');
+        Route::get('/users/create', [UserAdminController::class, 'create'])->name('admin.users.create');
+        Route::post('/users', [UserAdminController::class, 'store'])->name('admin.users.store');
+        Route::get('/users/{user}/edit', [UserAdminController::class, 'edit'])->name('admin.users.edit');
+        Route::put('/users/{user}', [UserAdminController::class, 'update'])->name('admin.users.update');
+        Route::delete('/users/{user}', [UserAdminController::class, 'destroy'])->name('admin.users.destroy');
     });

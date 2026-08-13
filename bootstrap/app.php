@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'superadmin' => \App\Core\Modules\Admin\Middleware\SuperAdmin::class,
+            'member' => \App\Core\Modules\Member\Middleware\MemberOnly::class,
         ]);
 
         // HTTPS di balik Cloudflare Tunnel — percaya X-Forwarded-Proto dari proxy.

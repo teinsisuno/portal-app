@@ -17,6 +17,7 @@ class ModuleServiceProvider extends ServiceProvider
         'Subscription',
         'Payment',
         'Admin',
+        'Member',
         'Absensi',
     ];
 

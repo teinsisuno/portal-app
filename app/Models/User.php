@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'phone', 'password', 'is_admin'])]
+#[Fillable(['name', 'email', 'phone', 'password', 'is_admin', 'member_type'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -21,11 +21,28 @@ class User extends Authenticatable implements MustVerifyEmail
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
+     * Tipe member platform.
+     */
+    public const MEMBER_TYPES = ['individu', 'umkm', 'perusahaan'];
+
+    /**
      * Apakah user adalah superadmin platform.
      */
     public function isSuperAdmin(): bool
     {
         return (bool) $this->is_admin;
+    }
+
+    /**
+     * Label tipe member yang ramah dibaca.
+     */
+    public function memberTypeLabel(): string
+    {
+        return match ($this->member_type) {
+            'umkm' => 'UMKM',
+            'perusahaan' => 'Perusahaan',
+            default => 'Individu',
+        };
     }
 
     /**

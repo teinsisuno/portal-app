@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'megakomsel.com')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-100 min-h-screen">
     <nav class="bg-white border-b border-slate-200">
@@ -18,6 +18,8 @@
                 @auth
                     @if (auth()->user()->isSuperAdmin())
                         <a href="{{ route('admin.tenants.index') }}" class="text-slate-600 hover:text-blue-600">Admin</a>
+                    @else
+                        <a href="{{ route('member.index') }}" class="text-slate-600 hover:text-blue-600">Area Member</a>
                     @endif
                 @endauth
                 <form method="POST" action="{{ route('logout') }}">

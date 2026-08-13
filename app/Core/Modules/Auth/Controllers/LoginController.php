@@ -32,7 +32,11 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('dashboard'));
+            $home = Auth::user()->isSuperAdmin()
+                ? route('dashboard')
+                : route('member.index');
+
+            return redirect()->intended($home);
         }
 
         return back()->withErrors([
