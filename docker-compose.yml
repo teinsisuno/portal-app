@@ -1,9 +1,9 @@
 services:
   portal-app:
-    # ⚠️ SEMENTARA: build lokal aktif (CI GHCR ke-lock billing GitHub 2026-08-13).
-    # Setelah billing beres & image GHCR ada, hapus `build: .` biar pure pull + Watchtower.
+    # ⚠️ SEMENTARA: build lokal aktif (CI GHCR lama ke-lock billing GitHub 2026-08-13).
+    # Setelah CI akun baru (teinsisuno) push image pertama, hapus `build: .` biar pure pull + Watchtower.
     build: .
-    image: ghcr.io/sigitsuseno/portal-app:latest
+    image: ghcr.io/teinsisuno/portal-app:latest
     container_name: portal-app
     restart: unless-stopped
     # Port 80 dipakai pepepe — portal-app listen di 8080 (tunnel megakomsel
