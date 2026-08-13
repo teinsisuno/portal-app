@@ -42,6 +42,11 @@ class PaymentController extends Controller
             return redirect()->route('payments.index');
         }
 
+        // LOW-10: subscription trialing/active tidak perlu bayar — blok akses langsung.
+        if (in_array($subscription->status, ['trialing', 'active'])) {
+            return redirect()->route('payments.index')->with('status', 'subscription-active');
+        }
+
         $amount = $this->paymentService->calculateAmount($subscription);
 
         return view('payments.create', [

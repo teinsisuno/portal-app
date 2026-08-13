@@ -7,6 +7,7 @@ use App\Core\Modules\Subscription\Models\Subscription;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class SubscriptionController extends Controller
@@ -31,7 +32,7 @@ class SubscriptionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'app_id' => ['required', 'exists:apps,id'],
+            'app_id' => ['required', Rule::exists('apps', 'id')->where('status', 'available')],
             'plan' => ['required', 'in:monthly,yearly'],
         ]);
 

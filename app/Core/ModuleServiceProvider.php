@@ -22,7 +22,17 @@ class ModuleServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        //
+        // Auto-register console commands dari tiap modul (app/Core/Modules/{Module}/Console).
+        foreach ($this->modules as $module) {
+            $consolePath = app_path("Core/Modules/{$module}/Console");
+
+            if (is_dir($consolePath)) {
+                foreach (glob($consolePath.'/*.php') ?: [] as $file) {
+                    $class = 'App\\Core\\Modules\\'.$module.'\\Console\\'.basename($file, '.php');
+                    $this->commands([$class]);
+                }
+            }
+        }
     }
 
     public function boot(): void

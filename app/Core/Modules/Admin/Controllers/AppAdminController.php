@@ -6,7 +6,7 @@ use App\Core\Modules\Apps\Models\AppModel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class AppAdminController extends Controller
@@ -31,7 +31,7 @@ class AppAdminController extends Controller
         $validated = $this->validateApp($request);
 
         AppModel::create([
-            'slug' => Str::slug($validated['name']),
+            'slug' => \Illuminate\Support\Str::slug($validated['name']),
             'name' => $validated['name'],
             'description' => $validated['description'],
             'price_monthly' => $validated['price_monthly'],
@@ -51,8 +51,8 @@ class AppAdminController extends Controller
     {
         $validated = $this->validateApp($request, $app->id);
 
+        // Slug TIDAK diubah saat update — biar referensi SSO/subdomain tetap aman.
         $app->update([
-            'slug' => Str::slug($validated['name']),
             'name' => $validated['name'],
             'description' => $validated['description'],
             'price_monthly' => $validated['price_monthly'],
@@ -66,7 +66,9 @@ class AppAdminController extends Controller
     protected function validateApp(Request $request, ?int $ignoreId = null): array
     {
         $rules = [
-            'name' => ['required', 'string', 'max:255'],
+            // Name unique sebagai proxy slug (slug = Str::slug(name)) — mencegah
+            // nama dobel → slug dobel → 500 di unique constraint.
+            'name' => ['required', 'string', 'max:255', Rule::unique('apps', 'name')->ignore($ignoreId)],
             'description' => ['required', 'string'],
             'price_monthly' => ['required', 'numeric', 'min:0'],
             'status' => ['required', 'in:available,coming_soon'],

@@ -20,6 +20,17 @@ class AppOpenController extends Controller
         $app = AppModel::where('slug', $slug)->firstOrFail();
         $user = $request->user();
 
+        // HIGH-2: verifikasi email wajib sebelum akses produk (SSO).
+        if (! $user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice')->with('status', 'verification-required');
+        }
+
+        // SSO saat ini hanya terintegrasi untuk produk Absensi (config absensi.*).
+        // Produk lain belum punya domain/SSO sendiri — jangan generate URL palsu.
+        if ($app->slug !== 'absensi') {
+            return redirect()->route('subscriptions.index')->with('status', 'app-not-available');
+        }
+
         $tenant = $user->tenants()->first();
         if (! $tenant) {
             return redirect()->route('subscriptions.index')->withErrors(['tenant' => 'Kamu belum punya tenant.']);

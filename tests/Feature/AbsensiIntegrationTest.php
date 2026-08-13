@@ -167,4 +167,37 @@ class AbsensiIntegrationTest extends TestCase
             ->assertRedirect(route('subscriptions.index'))
             ->assertSessionHas('status', 'subscription-required');
     }
+
+    public function test_open_absensi_requires_verified_email(): void
+    {
+        [$user, $tenant] = $this->makeUserWithTenant();
+        $this->makeAbsensiSubscription($tenant, 'trialing');
+
+        // Simulasikan user yang email-nya belum diverifikasi
+        // (email_verified_at bukan fillable — pakai forceFill)
+        $user->forceFill(['email_verified_at' => null])->save();
+
+        $this->actingAs($user)->get('/apps/absensi/open')
+            ->assertRedirect(route('verification.notice'))
+            ->assertSessionHas('status', 'verification-required');
+    }
+
+    public function test_open_non_absensi_app_is_blocked(): void
+    {
+        [$user, $tenant] = $this->makeUserWithTenant();
+        $app = AppModel::where('slug', 'toyaa')->firstOrFail();
+
+        Subscription::create([
+            'tenant_id' => $tenant->id,
+            'app_id' => $app->id,
+            'plan' => 'monthly',
+            'status' => 'trialing',
+            'starts_at' => now(),
+            'trial_ends_at' => now()->addDays(7),
+        ]);
+
+        $this->actingAs($user)->get('/apps/toyaa/open')
+            ->assertRedirect(route('subscriptions.index'))
+            ->assertSessionHas('status', 'app-not-available');
+    }
 }

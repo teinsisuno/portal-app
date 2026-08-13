@@ -77,6 +77,14 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email atau password salah.'], 422);
         }
 
+        // Verifikasi email wajib sebelum login penuh (PRD §5.4 / Sprint 1).
+        // Token hanya diberikan setelah email terverifikasi.
+        if (! $user->hasVerifiedEmail()) {
+            return response()->json([
+                'message' => 'Email belum diverifikasi. Cek inbox untuk link verifikasi.',
+            ], 403);
+        }
+
         $token = $user->createToken('auth')->plainTextToken;
 
         return response()->json(['user' => $user, 'token' => $token]);

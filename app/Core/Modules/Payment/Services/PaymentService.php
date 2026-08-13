@@ -2,11 +2,13 @@
 
 namespace App\Core\Modules\Payment\Services;
 
+use App\Core\Modules\Absensi\Services\AbsensiIntegrationService;
 use App\Core\Modules\Payment\Gateways\ManualTransferGateway;
 use App\Core\Modules\Payment\Gateways\PaymentGatewayInterface;
 use App\Core\Modules\Payment\Models\Payment;
 use App\Core\Modules\Subscription\Models\Subscription;
 use App\Core\Modules\Tenant\Models\Tenant;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PaymentService
@@ -40,6 +42,8 @@ class PaymentService
 
     /**
      * Konfirmasi pembayaran (idempotent) → subscription active, tenant active.
+     * Semua update dibungkus transaction; ends_at dihitung dari plan
+     * (monthly = +1 bulan, yearly = +1 tahun sejak konfirmasi).
      */
     public function confirmPayment(Payment $payment, int $adminId, ?string $notes = null): bool
     {
@@ -52,16 +56,30 @@ class PaymentService
             return false;
         }
 
-        $payment->update([
-            'status' => 'confirmed',
-            'confirmed_by' => $adminId,
-            'confirmed_at' => now(),
-            'notes' => $notes,
-        ]);
+        DB::transaction(function () use ($payment, $adminId, $notes) {
+            $payment->update([
+                'status' => 'confirmed',
+                'confirmed_by' => $adminId,
+                'confirmed_at' => now(),
+                'notes' => $notes,
+            ]);
 
-        $payment->subscription->update(['status' => 'active']);
+            $subscription = $payment->subscription;
 
-        Tenant::where('id', $payment->tenant_id)->update(['status' => 'active']);
+            $subscription->update([
+                'status' => 'active',
+                'starts_at' => $subscription->starts_at ?? now(),
+                'ends_at' => $subscription->plan === 'yearly' ? now()->addYear() : now()->addMonth(),
+            ]);
+
+            Tenant::where('id', $payment->tenant_id)->update(['status' => 'active']);
+
+            // MED-5: retry provisioning bila webhook pertama (saat subscribe) gagal.
+            // Absensi-app idempotent — aman dipanggil berulang.
+            if ($subscription->app->slug === 'absensi') {
+                app(AbsensiIntegrationService::class)->provisionTenant($subscription);
+            }
+        });
 
         return true;
     }

@@ -16,8 +16,15 @@ return Application::configure(basePath: dirname(__DIR__))
             'superadmin' => \App\Core\Modules\Admin\Middleware\SuperAdmin::class,
         ]);
 
-        // HTTPS di balik Cloudflare Tunnel — percaya X-Forwarded-Proto dari proxy
-        $middleware->trustProxies(at: '*');
+        // HTTPS di balik Cloudflare Tunnel — percaya X-Forwarded-Proto dari proxy.
+        // Batasi ke jaringan privat & localhost (bukan '*') biar header
+        // X-Forwarded-* tidak bisa di-spoof dari internet langsung.
+        $middleware->trustProxies(at: [
+            '127.0.0.1',
+            '10.0.0.0/8',
+            '172.16.0.0/12',
+            '192.168.0.0/16',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

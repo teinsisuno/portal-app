@@ -15,16 +15,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
-
+        // Superadmin platform (kredensial dev, lihat AGENTS.md).
         User::factory()->create([
             'name' => 'Admin Urano',
-            'email' => 'admin@megakomsel.com',
+            'email' => 'admin@uranop.com',
+            'password' => 'admin123456',
             'is_admin' => true,
         ]);
 

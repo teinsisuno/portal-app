@@ -47,8 +47,7 @@
                                     <a href="{{ route('apps.open', $sub->app->slug) }}"
                                        class="text-blue-600 hover:underline">Buka App ↗</a>
                                 @else
-                                    <a href="https://{{ $tenant->slug }}.megakomsel.com" target="_blank"
-                                       class="text-blue-600 hover:underline">Buka App ↗</a>
+                                    <span class="text-slate-400 text-xs">Menyusul</span>
                                 @endif
                             @else
                                 <a href="{{ route('payments.create', $sub->id) }}"

@@ -136,6 +136,20 @@ class CentralPlatformTest extends TestCase
         $this->assertDatabaseCount('subscriptions', 1);
     }
 
+    public function test_user_cannot_subscribe_to_coming_soon_app(): void
+    {
+        [$user] = $this->makeUserWithTenant();
+        $app = AppModel::where('slug', 'laundry')->firstOrFail();
+        $this->assertSame('coming_soon', $app->status);
+
+        $this->actingAs($user)->post('/subscriptions', [
+            'app_id' => $app->id,
+            'plan' => 'monthly',
+        ])->assertSessionHasErrors('app_id');
+
+        $this->assertDatabaseCount('subscriptions', 0);
+    }
+
     // ─── FR-004: Pembayaran manual ─────────────────────────────
 
     public function test_user_can_upload_payment_proof(): void
@@ -181,6 +195,63 @@ class CentralPlatformTest extends TestCase
         $this->assertDatabaseCount('payments', 0);
     }
 
+    public function test_payments_create_blocked_for_trialing_subscription(): void
+    {
+        [$user, $tenant] = $this->makeUserWithTenant();
+        $app = AppModel::where('slug', 'toyaa')->firstOrFail();
+        $this->makeSubscription($tenant, $app)->update(['status' => 'trialing']);
+
+        $sub = Subscription::where('tenant_id', $tenant->id)->firstOrFail();
+
+        $this->actingAs($user)->get("/payments/create/{$sub->id}")
+            ->assertRedirect(route('payments.index'))
+            ->assertSessionHas('status', 'subscription-active');
+    }
+
+    public function test_subscriptions_expire_command_transitions_past_due(): void
+    {
+        [$user, $tenant] = $this->makeUserWithTenant();
+        $toyaa = AppModel::where('slug', 'toyaa')->firstOrFail();
+        $absensi = AppModel::where('slug', 'absensi')->firstOrFail();
+        $laundry = AppModel::where('slug', 'laundry')->firstOrFail();
+
+        // Trial lewat jatuh tempo → past_due
+        $trial = Subscription::create([
+            'tenant_id' => $tenant->id,
+            'app_id' => $toyaa->id,
+            'plan' => 'monthly',
+            'status' => 'trialing',
+            'starts_at' => now()->subDays(10),
+            'trial_ends_at' => now()->subDays(3),
+        ]);
+
+        // Active lewat ends_at → past_due
+        $active = Subscription::create([
+            'tenant_id' => $tenant->id,
+            'app_id' => $absensi->id,
+            'plan' => 'monthly',
+            'status' => 'active',
+            'starts_at' => now()->subMonths(2),
+            'ends_at' => now()->subDays(1),
+        ]);
+
+        // Subscription yang masih jalan tidak boleh kena
+        Subscription::create([
+            'tenant_id' => $tenant->id,
+            'app_id' => $laundry->id,
+            'plan' => 'monthly',
+            'status' => 'trialing',
+            'starts_at' => now(),
+            'trial_ends_at' => now()->addDays(7),
+        ]);
+
+        $this->artisan('subscriptions:expire')->assertSuccessful();
+
+        $this->assertSame('past_due', $trial->fresh()->status);
+        $this->assertSame('past_due', $active->fresh()->status);
+        $this->assertSame('trialing', Subscription::where('app_id', $laundry->id)->first()->status);
+    }
+
     // ─── FR-006: Admin panel ───────────────────────────────────
 
     public function test_non_admin_cannot_access_admin_pages(): void
@@ -217,6 +288,11 @@ class CentralPlatformTest extends TestCase
         $this->assertDatabaseHas('subscriptions', ['id' => $subscription->id, 'status' => 'active']);
         $this->assertDatabaseHas('tenants', ['id' => $tenant->id, 'status' => 'active']);
 
+        // HIGH-1/MED-8: ends_at dihitung dari plan (monthly = +1 bulan sejak konfirmasi).
+        $this->assertNotNull($subscription->fresh()->ends_at);
+        $this->assertTrue($subscription->fresh()->ends_at->greaterThan(now()->addDays(27)));
+        $this->assertTrue($subscription->fresh()->ends_at->lessThanOrEqualTo(now()->addMonths(1)));
+
         // Idempotent: konfirmasi ulang tidak mengubah apa-apa (PRD §8)
         $this->actingAs($admin)->post("/admin/payments/{$payment->id}/confirm");
         $this->assertDatabaseHas('payments', ['id' => $payment->id, 'status' => 'confirmed', 'confirmed_at' => $payment->fresh()->confirmed_at]);
@@ -245,6 +321,20 @@ class CentralPlatformTest extends TestCase
         $this->assertDatabaseHas('payments', ['id' => $payment->id, 'status' => 'rejected']);
     }
 
+    public function test_admin_cannot_create_duplicate_app_name(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+
+        $this->actingAs($admin)->post('/admin/apps', [
+            'name' => 'Absensi',
+            'description' => 'Dobel',
+            'price_monthly' => 10000,
+            'status' => 'available',
+        ])->assertSessionHasErrors('name');
+
+        $this->assertDatabaseCount('apps', 4); // 4 dari AppSeeder
+    }
+
     // ─── PRD §11: API Auth ─────────────────────────────────────
 
     public function test_api_register_returns_token_and_tenant(): void
@@ -269,6 +359,21 @@ class CentralPlatformTest extends TestCase
             'email' => $user->email,
             'password' => 'secret123',
         ])->assertOk()->assertJsonStructure(['token', 'user']);
+    }
+
+    public function test_api_login_unverified_email_is_blocked(): void
+    {
+        $user = User::factory()->create([
+            'password' => bcrypt('secret123'),
+            'email_verified_at' => null,
+        ]);
+
+        $this->postJson('/api/v1/auth/login', [
+            'email' => $user->email,
+            'password' => 'secret123',
+        ])->assertStatus(403)->assertJsonPath('message', 'Email belum diverifikasi. Cek inbox untuk link verifikasi.');
+
+        $this->assertSame(0, $user->tokens()->count());
     }
 
     public function test_api_login_wrong_password_rejected(): void
